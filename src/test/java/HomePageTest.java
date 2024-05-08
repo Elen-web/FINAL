@@ -7,15 +7,22 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import pages.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
 public class HomePageTest extends BaseTest {
+
+
+
 
     @Test
     public void testNavigateAndPostJob() {
@@ -26,8 +33,8 @@ public class HomePageTest extends BaseTest {
             DribbbleHiringPage hiringPage = homePage.clickFindDesigners();
             hiringPage.clickPostYourJob();
 
-            // Add assertions here to confirm navigation
-            String expectedUrl = "https://dribbble.com/jobs/new"; // Example URL, adjust as needed
+
+            String expectedUrl = "https://dribbble.com/jobs/new";
             Assert.assertEquals("Should navigate to post job page", expectedUrl, driver.getCurrentUrl());
         } finally {
             driver.quit();
@@ -55,6 +62,7 @@ public class HomePageTest extends BaseTest {
             driver.quit();
         }
     }
+
 
 
 

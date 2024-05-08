@@ -1,28 +1,53 @@
 
-import messages.AssertionMessages;
-import org.junit.Before;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.Test;
 import org.junit.Assert;
 import pages.DribbbleHomePage;
-import pages.DribbbleSignedInUserHomePage;
 import pages.DribbbleSigninPage;
 import pages.DribbbleSignupPage;
 
 public class SignupTest extends BaseTest {
 
-    @Before
-    public void setUp() {
-        // Replace "path_to_your_chromedriver" with the actual path to your ChromeDriver executable
-        System.setProperty("webdriver.chrome.driver", "resources/chromedriver.exe");
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();
-        // Additional initialization code can go here
+
+    @Test(description = "Invalid Sign Up Test - Missing Email")
+    public void invalidSignUpTestMissingEmail() {
+        DribbbleSignupPage signupPage = homePage.clickSignUpButton();
+        signupPage.clickContinueWithEmailButton();
+        signupPage.fillNameField("Soft Test");
+        signupPage.fillUsernameField("sttest321");
+        signupPage.fillPasswordField("Passw77jd123");
+        signupPage.fillEmailField(""); // Intentionally missing email
+        signupPage.checkAgreeToTerms();
+        String errorMessage = signupPage.getErrorMessage();
+        Assert.assertNotNull(errorMessage, "No error message displayed when expected.");
+
     }
+
+    @Test(description = "Valid Sign Up Test")
+    public void validSignUpTest() {
+        DribbbleSignupPage signupPage = homePage.clickSignUpButton();
+        signupPage.clickContinueWithEmailButton();
+        signupPage.fillNameField("Soft Test");
+        signupPage.fillUsernameField("sttest321");
+        signupPage.fillPasswordField("Passw77jd123");
+        signupPage.fillEmailField("softtest@gmail.com.com");
+        signupPage.checkAgreeToTerms();
+
+    }
+
+
+
+    @Test(description = "Invalid Sign Up Test - Missing Email", groups = {"signUp"})
+    public void invalidSignUpMissingEmailTest() throws InterruptedException {
+        DribbbleHomePage homePage = new DribbbleHomePage(driver);
+        DribbbleSignupPage signUpPage = homePage.clickSignUpButton();
+        signUpPage.fillPasswordField("validPassword");
+        signUpPage.submitCreateAccount();
+        Assert.assertTrue(signUpPage.isAlertDisplayed("Please enter your email"));
+    }
+
 
 
 
@@ -31,14 +56,11 @@ public class SignupTest extends BaseTest {
         DribbbleSignupPage signupPage = homePage.clickSignUpButton();
         signupPage.clickContinueWithEmailButton();
 
-        DribbbleSigninPage signinPage = signupPage.clickSignInLink(); // Assuming clickSignInLink() returns a DribbbleSigninPage
+        DribbbleSigninPage signinPage = signupPage.clickSignInLink();
         signinPage.clickForgotPasswordLink();
 
         Assert.assertTrue("Reset password form should be visible", driver.findElement(By.id("reset-password-form")).isDisplayed());
     }
-
-
-
 
 
 
@@ -59,8 +81,8 @@ public class SignupTest extends BaseTest {
 //
 //        driver.quit();
 //    }
-
 }
+
 
 
 

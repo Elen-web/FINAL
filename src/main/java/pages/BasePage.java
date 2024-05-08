@@ -1,66 +1,56 @@
 package pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class BasePage {
     protected WebDriver driver;
-    private By userIcon = By.className("nav-v2-avatar__image");
-    private By searchField = By.className("nav-v2-search__input");
-    private By followingButton = By.cssSelector("[data-test='filter-active-shot-view']");
-    private By goProButton = By.xpath("//a[contains(@class, 'framer-text') and contains(@data-styles-preset, 'tZm06TWqh') and @href='/pro']");
+    protected WebDriverWait wait;
 
     public BasePage(WebDriver driver) {
         this.driver = driver;
+        this.wait = new WebDriverWait(driver, 10);
+
     }
 
     public void waitForSeconds(double seconds) {
         try {
-            Thread.sleep((long) (seconds * 1000.0));
-        } catch (InterruptedException var4) {
-            var4.printStackTrace();
+            Thread.sleep((long) (seconds * 1000));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
-    public DribbbleSignedInUserHomePage navigateToUserHomePage() {
-        driver.findElement(userIcon).click();
-        return new DribbbleSignedInUserHomePage(driver);
+    protected void waitForVisibility(By locator) {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 
-    public void search(String query) {
-        driver.findElement(searchField).sendKeys(query);
-        driver.findElement(searchField).submit();
+    protected void click(By locator) {
+        waitForVisibility(locator);
+        driver.findElement(locator).click();
     }
 
-    public void clickFollowingButton() {
-        driver.findElement(followingButton).click();
+    protected void type(By locator, String text) {
+        waitForVisibility(locator);
+        WebElement element = driver.findElement(locator);
+        element.clear();
+        element.sendKeys(text);
     }
 
-    public void clickGoProButton() {
-        driver.findElement(goProButton).click();
+    protected String getText(By locator) {
+        waitForVisibility(locator);
+        return driver.findElement(locator).getText();
     }
 
-
+    protected boolean isDisplayed(By locator) {
+        try {
+            return driver.findElement(locator).isDisplayed();
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

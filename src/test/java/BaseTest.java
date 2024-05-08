@@ -1,33 +1,44 @@
-import org.junit.Before;
+import com.google.common.io.Files;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.ITestResult;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import pages.DribbbleHomePage;
 import pages.DribbbleSigninPage;
+import pages.DribbbleSignupPage;
+import pages.DribbbleSearchResultsPage;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 
 public class BaseTest {
     protected WebDriver driver;
+    protected DribbbleSearchResultsPage searchPage;
     protected DribbbleHomePage homePage;
     protected DribbbleSigninPage signinPage;
+    protected DribbbleSignupPage signupPage;
 
-    @Before
+    @BeforeClass
     public void setUp() {
         System.setProperty("webdriver.chrome.driver", "resources/chromedriver.exe");
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();
-        homePage = new DribbbleHomePage(driver);
-        signinPage = new DribbbleSigninPage(driver);
-        driver.get("https://dribbble.com/");
+    }
+
+    @BeforeMethod
+    public void goHome() {
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments(new String[]{"--remote-allow-origins=*"});
+        this.driver = new ChromeDriver(options);
+        this.driver.manage().window().maximize();
+        this.driver.get("https://dribbble.com/");
+        this.homePage = new DribbbleHomePage(this.driver);
+
+        this.signupPage = new DribbbleSignupPage(this.driver); //take away
     }
 
 
@@ -39,24 +50,18 @@ public class BaseTest {
         }
     }
 
+
     @AfterMethod
-    public void recordFailure(ITestResult result) {
-        if (result.getStatus() == ITestResult.FAILURE) {
-            // Check if driver is not null and is an instance of TakesScreenshot
-            if (driver != null && driver instanceof TakesScreenshot) {
-                TakesScreenshot camera = (TakesScreenshot) driver;
-                File screenshot = camera.getScreenshotAs(OutputType.FILE);
-                try {
-                    File screenshotDirectory = new File("resources/screenshots");
-                    if (!screenshotDirectory.exists()) {
-                        screenshotDirectory.mkdirs();
-                    }
-                    Files.copy(screenshot.toPath(), new File(screenshotDirectory.getPath() + "/" + result.getName() + ".png").toPath());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+    public void recordFailure(ITestResult result){
+        if(ITestResult.FAILURE == result.getStatus())
+        { var cam = (TakesScreenshot) driver;
+            File screenshot = cam.getScreenshotAs(OutputType.FILE);
+            try{
+                Files.move(screenshot, new File("resources/screenshots/" + result.getName() + ".png"));
+            }catch (IOException e){
+                e.printStackTrace();
             }
-        }
+        }   driver.quit();
     }
 
 }

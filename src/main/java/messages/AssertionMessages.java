@@ -6,6 +6,6 @@ public class AssertionMessages {
     public static final String SIGN_UP_PAGE_NOT_DISPLAYED = "Sign-up page should be displayed";
     public static final String LOGIN_PAGE_NOT_DISPLAYED = "Login page should be displayed";
     public static final String SIGN_UP_PAGE_URL_INCORRECT = "URL of the sign-up page is incorrect";
-
+    public static final String ALERT_MESSAGE = "Alert Message!";
 
 }

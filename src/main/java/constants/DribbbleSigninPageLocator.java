@@ -7,7 +7,4 @@ public class DribbbleSigninPageLocator {
     public static final String SIGN_UP_LINK = "a.underline";
 
 
-    private DribbbleSigninPageLocator() {
-
-    }
 }
